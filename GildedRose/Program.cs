@@ -6,8 +6,9 @@ namespace GildedRose
     public class Program
     {
         public IList<Item> Items;
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
+            /*
             System.Console.WriteLine("OMGHAI!");
 
             var app = new Program()
@@ -54,9 +55,9 @@ namespace GildedRose
                 Console.WriteLine("");
                 app.UpdateQuality();
             }
-
+            */
         }
-
+        /*
         public void UpdateQuality()
         {
             for (var i = 0; i < Items.Count; i++)
@@ -67,6 +68,9 @@ namespace GildedRose
                     {
                         if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
                         {
+                            Items[i].Quality = Items[i].Quality - 1;
+                        }
+                        if (Items[i].Name == "Conjured Mana Cake"){
                             Items[i].Quality = Items[i].Quality - 1;
                         }
                     }
@@ -115,6 +119,9 @@ namespace GildedRose
                                 {
                                     Items[i].Quality = Items[i].Quality - 1;
                                 }
+                                if (Items[i].Name == "Conjured Mana Cake"){
+                                    Items[i].Quality = Items[i].Quality - 1;
+                                }
                             }
                         }
                         else
@@ -132,6 +139,7 @@ namespace GildedRose
                 }
             }
         }
+        */
 
     }
 
@@ -142,6 +150,68 @@ namespace GildedRose
         public int SellIn { get; set; }
 
         public int Quality { get; set; }
+
+        virtual public void UpdateQuality(){
+            SellIn--;
+            if (SellIn < 0){
+                Quality -=2;
+            } else{
+                Quality--;
+            }
+            if (Quality < 0){
+                Quality = 0;
+            }
+            
+        }
+    }
+    public class LegendaryItem : Item
+    {
+        override public void UpdateQuality(){
+           
+        }
+    }
+    public class WellAgingItem : Item{
+        override public void UpdateQuality(){
+            SellIn--;
+            Quality++;
+            if (Quality > 50){
+                Quality = 50;
+            }
+        }
+    }
+    public class BackstageItem : Item{
+        override public void UpdateQuality(){
+            SellIn--;
+            if(SellIn <=0){
+                Quality = 0;
+                return;
+            }
+            if(SellIn > 0){
+                Quality++;
+            }
+            if(SellIn < 10){
+                Quality++;
+            }
+             if(SellIn < 5){
+                Quality++;
+            }
+            if(Quality > 50){
+                Quality = 50;
+            }
+        }
+    }
+    
+    public class ConjuredItem : Item{
+        override public void UpdateQuality(){
+            SellIn --;
+            Quality -=2;
+            if (SellIn < 0){
+                Quality -=2;
+            } 
+            if (Quality < 0){
+                Quality = 0;
+            }
+        }
     }
 
 }

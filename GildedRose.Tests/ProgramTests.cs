@@ -20,7 +20,7 @@ public class ProgramTests
                 new Item { Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20 }
             }
         };
-        app.UpdateQuality();
+        app.Items[0].UpdateQuality();
         app.Items[0].SellIn.Should().Be(9);
         app.Items[0].Quality.Should().Be(19);
     }
@@ -32,7 +32,7 @@ public class ProgramTests
                 new Item { Name = "+5 Dexterity Vest", SellIn = 0, Quality = 20 }
             }
         };
-        app.UpdateQuality();
+        app.Items[0].UpdateQuality();
         app.Items[0].SellIn.Should().Be(-1);
         app.Items[0].Quality.Should().Be(18);
     }
@@ -41,10 +41,10 @@ public class ProgramTests
         
         var app = new Program(){
             Items = new List<Item>(){
-                new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80 }
+                new LegendaryItem { Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80 }
             }
         };
-        app.UpdateQuality();
+        app.Items[0].UpdateQuality();
         app.Items[0].SellIn.Should().Be(0);
         app.Items[0].Quality.Should().Be(80);
     }
@@ -53,10 +53,10 @@ public class ProgramTests
         
         var app = new Program(){
             Items = new List<Item>(){
-                new Item { Name = "Aged Brie", SellIn = 5, Quality = 10 }
+                new WellAgingItem { Name = "Aged Brie", SellIn = 5, Quality = 10 }
             }
         };
-        app.UpdateQuality();
+        app.Items[0].UpdateQuality();
         app.Items[0].SellIn.Should().Be(4);
         app.Items[0].Quality.Should().Be(11);
     }
@@ -65,10 +65,22 @@ public class ProgramTests
         
         var app = new Program(){
             Items = new List<Item>(){
-                new Item { Name = "Aged Brie", SellIn = 5, Quality = 50 }
+                new WellAgingItem { Name = "Aged Brie", SellIn = 5, Quality = 50 }
             }
         };
-        app.UpdateQuality();
+        app.Items[0].UpdateQuality();
+        app.Items[0].SellIn.Should().Be(4);
+        app.Items[0].Quality.Should().Be(50);
+    }
+    [Fact]
+    public void backstage_quality_does_not_exceed_50(){
+        
+        var app = new Program(){
+            Items = new List<Item>(){
+                new BackstageItem { Name = "Aged Brie", SellIn = 5, Quality = 50 }
+            }
+        };
+        app.Items[0].UpdateQuality();
         app.Items[0].SellIn.Should().Be(4);
         app.Items[0].Quality.Should().Be(50);
     }
@@ -77,10 +89,10 @@ public class ProgramTests
         
         var app = new Program(){
             Items = new List<Item>(){
-                new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 12, Quality = 20 }
+                new BackstageItem { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 12, Quality = 20 }
             }
         };
-        app.UpdateQuality();
+        app.Items[0].UpdateQuality();
         app.Items[0].SellIn.Should().Be(11);
         app.Items[0].Quality.Should().Be(21);
     }
@@ -89,10 +101,10 @@ public class ProgramTests
         
         var app = new Program(){
             Items = new List<Item>(){
-                new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 7, Quality = 20 }
+                new BackstageItem { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 7, Quality = 20 }
             }
         };
-        app.UpdateQuality();
+        app.Items[0].UpdateQuality();
         app.Items[0].SellIn.Should().Be(6);
         app.Items[0].Quality.Should().Be(22);
     }
@@ -101,10 +113,10 @@ public class ProgramTests
         
         var app = new Program(){
             Items = new List<Item>(){
-                new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 4, Quality = 20 }
+                new BackstageItem { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 4, Quality = 20 }
             }
         };
-        app.UpdateQuality();
+        app.Items[0].UpdateQuality();
         app.Items[0].SellIn.Should().Be(3);
         app.Items[0].Quality.Should().Be(23);
     }
@@ -113,10 +125,10 @@ public class ProgramTests
         
         var app = new Program(){
             Items = new List<Item>(){
-                new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 0, Quality = 20 }
+                new BackstageItem { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 0, Quality = 20 }
             }
         };
-        app.UpdateQuality();
+        app.Items[0].UpdateQuality();
         app.Items[0].SellIn.Should().Be(-1);
         app.Items[0].Quality.Should().Be(0);
     }
@@ -128,9 +140,90 @@ public class ProgramTests
                 new Item { Name = "+5 Dexterity Vest", SellIn = 10, Quality = 0 }
             }
         };
-        app.UpdateQuality();
+        app.Items[0].UpdateQuality();
         app.Items[0].SellIn.Should().Be(9);
         app.Items[0].Quality.Should().Be(0);
     }
-
+    [Fact]
+    public void backstagepass_loop(){
+        
+        var app = new Program(){
+            Items = new List<Item>(){
+                new BackstageItem { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 20, Quality = 0 }
+            }
+        };
+        for(int i = 0; i < 16; i++){
+            app.Items[0].UpdateQuality();
+        }
+        
+        app.Items[0].SellIn.Should().Be(4);
+        app.Items[0].Quality.Should().Be(23);
+    }
+    [Fact]
+    public void brie_loop(){
+        
+        var app = new Program(){
+            Items = new List<Item>(){
+                new WellAgingItem { Name = "Aged Brie", SellIn = 20, Quality = 0 }
+            }
+        };
+        for(int i = 0; i < 16; i++){
+            app.Items[0].UpdateQuality();
+        }
+        
+        app.Items[0].SellIn.Should().Be(4);
+        app.Items[0].Quality.Should().Be(16);
+    }
+    [Fact]
+    public void item_get_name(){
+       var app = new Program(){
+            Items = new List<Item>(){
+                new Item { Name = "Aged Brie", SellIn = 20, Quality = 0 }
+            }
+        };
+        app.Items[0].Name.Should().Be("Aged Brie");
+    }
+    [Fact]
+    public void item_set_name(){
+       var app = new Program(){
+            Items = new List<Item>(){
+                new Item { Name = "Item", SellIn = 20, Quality = 0 }
+            }
+        };
+        app.Items[0].Name = "Aged Brie";
+        app.Items[0].Name.Should().Be("Aged Brie");
+    }
+    [Fact]
+    public void conjured_mana_cake_deteriorates_twice_as_fast(){
+       var app = new Program(){
+            Items = new List<Item>(){
+                new ConjuredItem { Name = "Conjured Mana Cake", SellIn = 20, Quality = 10 }
+            }
+        };
+        app.Items[0].UpdateQuality();
+        app.Items[0].SellIn.Should().Be(19);
+        app.Items[0].Quality.Should().Be(8);
+    }
+    [Fact]
+    public void expired_conjured_mana_cake_deteriorates_twice_as_fast(){
+       var app = new Program(){
+            Items = new List<Item>(){
+                new ConjuredItem { Name = "Conjured Mana Cake", SellIn = 0, Quality = 10 }
+            }
+        };
+        app.Items[0].UpdateQuality();
+        app.Items[0].SellIn.Should().Be(-1);
+        app.Items[0].Quality.Should().Be(6);
+    }
+    [Fact]
+    public void conjured_mana_cake_quality_never_recedes_0(){
+       var app = new Program(){
+            Items = new List<Item>(){
+                new ConjuredItem { Name = "Conjured Mana Cake", SellIn = 20, Quality = 0 }
+            }
+        };
+        app.Items[0].UpdateQuality();
+        app.Items[0].SellIn.Should().Be(19);
+        app.Items[0].Quality.Should().Be(0);
+    }
 }
